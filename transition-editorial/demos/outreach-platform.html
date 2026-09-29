@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f6f2">
+  <title>Outreach archive — synthetic demo</title>
+  <link rel="stylesheet" href="outreach-platform.css">
+  <script src="outreach-platform.js" defer></script>
+</head>
+<body>
+  <header class="topbar"><a href="../projects/outreach-platform.html">← Back to project</a><span>OUTREACH ARCHIVE / SYNTHETIC DEMO</span><a href="https://github.com/alenoto29/outreach-archive" target="_blank" rel="noopener noreferrer">Source on GitHub ↗</a></header>
+  <main>
+    <div class="intro"><div><p class="eyebrow">A shared contact workspace</p><h1>Find the right<br>person.</h1></div><div class="intro-side"><p>Explore <strong>40 entirely invented journalist profiles</strong>, then open the KPI history to see how a shared archive keeps track of activity over time. This browser preview uses no live contacts, backend or sending service.</p><p class="warning">All names, outlets, articles, statuses and metrics are fictional. Addresses use the non-deliverable <code>.invalid</code> domain.</p></div></div>
+    <nav class="demo-tabs" aria-label="Demo views"><button id="directory-tab" class="active" type="button" aria-current="page">Directory</button><button id="kpi-tab" type="button">KPI history</button></nav>
+    <section id="directory-view" class="workspace" aria-label="Journalist directory">
+      <div class="directory"><div class="section-head"><div><span class="eyebrow">01 / Directory</span><h2>Journalists <span id="count">40</span></h2></div><span class="small">Select a row to inspect every field</span></div>
+        <div class="filters"><label>Search<input id="search" type="search" placeholder="Name, publisher or topic" autocomplete="off"></label><label>Market<select id="market"><option value="">All markets</option><option>IT</option><option>ES</option><option>FR</option><option>UK</option><option>PT</option></select></label><label>Topic<select id="topic"><option value="">All topics</option></select></label></div>
+        <div class="list-heading" aria-hidden="true"><span>CONTACT / COVERAGE</span><span>PUBLISHER</span><span>STATUS</span></div><div id="list" class="list"></div><p id="empty" class="empty" hidden>No matching fictional profiles. Try a broader search.</p>
+      </div>
+      <aside class="profile" aria-live="polite"><div class="section-head"><div><span class="eyebrow">02 / Profile</span><h2 id="profile-name">Select a contact</h2></div><span id="profile-index" class="small"></span></div><p id="profile-summary" class="summary"></p><dl id="profile-fields" class="fields"></dl></aside>
+    </section>
+    <section id="kpi-view" class="kpi-view" aria-label="Synthetic KPI history" hidden>
+      <div class="section-head"><div><span class="eyebrow">02 / KPI history</span><h2>From scattered files<br>to one record.</h2></div><span class="small">Illustrative snapshots · 2026</span></div>
+      <p class="kpi-intro">A view of contacts, publishers and outreach activity over time. Every number below is calculated from this invented sample or a clearly labelled fictional campaign count; it is not a business result.</p>
+      <div id="kpi-cards" class="kpi-cards"></div>
+      <div class="history"><div><span class="eyebrow">Historical view</span><h3>Four snapshots</h3></div><div id="history-bars" class="history-bars" aria-label="Journalists and contacted profiles over time"></div></div>
+      <div class="history-table-wrap"><table><caption>Illustrative KPI history; cumulative synthetic profiles</caption><thead><tr><th scope="col">Snapshot</th><th scope="col">Journalists</th><th scope="col">Publishers</th><th scope="col">Contacted</th><th scope="col">With reports</th><th scope="col">Campaigns*</th></tr></thead><tbody id="history-rows"></tbody></table><p class="kpi-footnote">*Campaign totals are invented for this preview. “Contacted” means a synthetic profile with a contact count above zero; “with reports” means a synthetic profile with a report count above zero. No outreach was sent from this demo.</p></div>
+    </section>
+    <footer><span>Standalone, read-only interface · synthetic sample data</span><a href="../projects/outreach-platform.html">Project story ↗</a></footer>
+  </main>
+</body>
+</html>

@@ -1,0 +1,1682 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synthetic paid acquisition report</title><style>
+:root{
+  --page:#f9f9f7; --surface:#fcfcfb; --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --line:rgba(11,11,11,.10);
+  --source-apple:#2a78d6; --source-google:#e86632; --source-meta:#5264d9; --source-organic:#1b9d70;
+  --store-play:#34884b; --store-app:#6b7785;
+  --event-install:#bc8700; --event-registration:#008c95; --event-inventory:#c04482; --event-purchase:#606875;
+  --product-created:#7552a5; --product-signed:#287a68;
+  --mixed:#642f88; --metric-spend:#484b52; --metric-revenue:#c77a1f; --muted-mark:#898781;
+  --warn:#fff8e2; --warn-line:#e8d59a;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+  --page:#0d0d0d; --surface:#1a1a19; --ink:#fff; --ink-2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --line:rgba(255,255,255,.10);
+  --source-apple:#4e93e7; --source-google:#ee7648; --source-meta:#7783ed; --source-organic:#32b884;
+  --store-play:#53ae68; --store-app:#9da7b2;
+  --event-install:#d3a323; --event-registration:#20aeb6; --event-inventory:#d65d99; --event-purchase:#89919d;
+  --product-created:#a986d4; --product-signed:#55af99;
+  --mixed:#b878d5; --metric-spend:#a7abb3; --metric-revenue:#dda24e;
+  --warn:#2b2617; --warn-line:#5c4f24;
+}}
+:root[data-theme=dark]{
+  --page:#0d0d0d; --surface:#1a1a19; --ink:#fff; --ink-2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --line:rgba(255,255,255,.10);
+  --source-apple:#4e93e7; --source-google:#ee7648; --source-meta:#7783ed; --source-organic:#32b884;
+  --store-play:#53ae68; --store-app:#9da7b2;
+  --event-install:#d3a323; --event-registration:#20aeb6; --event-inventory:#d65d99; --event-purchase:#89919d;
+  --product-created:#a986d4; --product-signed:#55af99;
+  --mixed:#b878d5; --metric-spend:#a7abb3; --metric-revenue:#dda24e;
+  --warn:#2b2617; --warn-line:#5c4f24;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);
+  font:15px/1.5 "Avenir Next",Avenir,"Helvetica Neue",sans-serif}
+.wrap{max-width:1280px;margin:0 auto;padding:26px 20px 72px}
+.page-nav{display:flex;gap:7px;margin-bottom:18px}
+.page-nav a{font-size:12px;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);
+  border-radius:999px;padding:6px 12px;text-decoration:none}
+.page-nav a:hover{border-color:var(--axis)}
+.page-nav a[aria-current=page]{color:var(--surface);background:var(--ink);border-color:var(--ink)}
+h1{font-size:25px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:17px;margin:30px 0 12px}
+.lede{color:var(--ink-2);margin:0 0 18px;max-width:78ch}
+.updated{display:inline-block;margin:2px 0 10px;padding:5px 10px;border:1px solid var(--line);
+  border-radius:999px;background:var(--surface);color:var(--ink);font-size:12px;font-weight:600}
+.controls{display:flex;flex-wrap:wrap;gap:18px;align-items:center;padding:12px 0 4px;
+  border-bottom:1px solid var(--line);margin-bottom:18px;position:sticky;top:0;background:var(--page);z-index:5}
+.group{display:flex;gap:6px;align-items:center}
+.group span.name{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-right:2px}
+button{font:inherit;font-size:13px;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);
+  border-radius:999px;padding:5px 12px;cursor:pointer}
+button:hover{border-color:var(--axis)}
+button.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.source-group{flex-wrap:wrap}
+.source-toggle{display:inline-flex;align-items:center;gap:7px}
+.source-toggle i,.source-name i{display:inline-block;width:9px;height:9px;border-radius:3px;flex:none}
+.source-toggle:not(.on){opacity:.52;text-decoration:line-through}
+.calendar{gap:5px}
+.calendar label{font-size:11px;color:var(--muted)}
+.calendar input{font:inherit;font-size:12px;color:var(--ink-2);background:var(--surface);
+  border:1px solid var(--line);border-radius:8px;padding:5px 7px;min-width:126px;color-scheme:light dark}
+.calendar input:hover,.calendar input:focus{border-color:var(--axis);outline:none}
+.calendar input[aria-invalid=true]{border-color:#c4513d}
+.date-error{font-size:11px;color:#b8432f;min-height:16px}
+#slice{margin-left:auto;font-size:12px;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin:0 0 22px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 15px;
+  display:flex;flex-direction:column;gap:2px}
+.kpi .label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.kpi .value{font-size:24px;font-weight:600;line-height:1.15}
+.kpi .note{font-size:11px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(460px,1fr));gap:16px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 16px 12px;
+  min-width:0}
+.panel h3{font-size:14px;margin:0 0 2px}
+.panel .sub{font-size:12px;color:var(--muted);margin:0 0 10px;max-width:62ch}
+.plot{height:250px;width:100%;min-width:0}
+#chart-money .plot,#chart-gap .plot{height:290px}
+#chart-events .plot{height:280px}
+.plot svg{display:block;max-width:100%}
+.grid line.grid{stroke:var(--grid);stroke-width:1}
+line.grid{stroke:var(--grid);stroke-width:1}
+line.axis{stroke:var(--axis);stroke-width:1}
+text.tick{font-size:10px;fill:var(--muted);font-variant-numeric:tabular-nums}
+text.value-label{font-size:10px;font-weight:600;font-variant-numeric:tabular-nums}
+rect.hit{fill:transparent;outline:none}
+rect.hit.hot{fill:var(--ink);fill-opacity:.04}
+rect.hit:focus-visible{fill:var(--ink);fill-opacity:.07}
+circle.dot{stroke:var(--surface);stroke-width:2}
+.keys{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.key{display:inline-flex;align-items:center;gap:6px;font-size:12px;padding:3px 9px;border-radius:999px;
+  border:1px solid var(--line);background:transparent;color:var(--ink-2)}
+.key i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.key.off{opacity:.4;text-decoration:line-through}
+#tooltip{position:fixed;top:0;left:0;pointer-events:none;z-index:50;background:var(--surface);
+  border:1px solid var(--line);border-radius:10px;padding:9px 11px;min-width:150px;
+  box-shadow:0 8px 26px rgba(0,0,0,.16)}
+.tt-title{font-size:11px;color:var(--muted);margin-bottom:5px;font-variant-numeric:tabular-nums}
+.tt-row{display:flex;align-items:center;gap:7px;font-size:13px;line-height:1.7}
+.tt-key{width:12px;height:2px;border-radius:2px;flex:none}
+.tt-row strong{font-variant-numeric:tabular-nums}
+.tt-label{color:var(--ink-2)}
+.callout{background:var(--warn);border:1px solid var(--warn-line);border-radius:12px;padding:14px 16px;margin:22px 0}
+.callout ul{margin:8px 0 0;padding-left:18px}.callout li{margin:3px 0}
+.cover{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-top:4px}
+.cover div{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-size:13px}
+.cover .st{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.cover .blocked{border-color:var(--warn-line);background:var(--warn)}
+details{margin-top:18px;border-top:1px solid var(--line);padding-top:12px}
+summary{cursor:pointer;font-size:13px;color:var(--ink-2)}
+.summary-section{margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:17px 16px 10px}
+.summary-section h2{font-size:16px;margin:0 0 2px}
+.summary-section .sub{font-size:12px;color:var(--muted);margin:0 0 12px;max-width:90ch}
+#summary-table-host{overflow-x:auto}
+#summary-table-host table{border-collapse:separate;border-spacing:0;width:100%;min-width:1040px;font-size:12px}
+#summary-table-host th,#summary-table-host td{padding:10px 11px;border-bottom:1px solid var(--line);
+  text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+#summary-table-host th{font-size:10px;text-transform:uppercase;letter-spacing:.045em;color:var(--muted);
+  background:var(--surface);position:sticky;top:0}
+#summary-table-host th:first-child,#summary-table-host td:first-child{text-align:left;position:sticky;left:0;
+  background:var(--surface);z-index:1}
+#summary-table-host tbody tr:hover td{background:color-mix(in srgb,var(--surface) 84%,var(--grid))}
+#summary-table-host tfoot td{font-weight:700;border-bottom:0;border-top:1px solid var(--axis)}
+.source-name{display:inline-flex;align-items:center;gap:8px;font-weight:600}
+.metric-mixed{color:var(--mixed);font-weight:700}
+.empty{color:var(--muted);font-size:13px;padding:24px 0}
+footer{color:var(--muted);font-size:12px;margin-top:34px}
+@media(max-width:720px){#slice{width:100%;margin-left:0}.calendar{flex-wrap:wrap}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.plot{height:220px}
+  #chart-money .plot,#chart-gap .plot,#chart-events .plot{height:250px}
+  .controls{position:static}.calendar input{min-width:118px}}
+</style></head><body>
+<div class='wrap'>
+<h1>Synthetic paid acquisition report</h1>
+<p class='updated'>Last updated: 5 September 2026 · Data through: 2 September 2026</p>
+<p class='lede'>Paid delivery comes from native platform exports; attributed installs, events and revenue retain their source. EUR · Synthetic market · iOS, Android. Descriptive monitoring only — no cohort verdicts.</p>
+<details class='data-status'><summary>Data coverage · impression gaps are explicit</summary><ul><li><strong>impressions / clicks:</strong> Apple Ads daily by campaign; Google Ads daily by platform. Meta is unavailable.</li><li><strong>store impressions:</strong> Google Play Store: not_available; App Store: available. Store clicks, visitors and page views are not substituted.</li></ul></details>
+
+<div class='controls'>
+  <div class='group'><span class='name'>Range</span>
+    <button type='button' data-range='7'>7d</button>
+    <button type='button' data-range='30' class='on'>30d</button>
+    <button type='button' data-range='90'>90d</button>
+    <button type='button' data-range='0'>All</button></div>
+  <div class='group'><span class='name'>Grain</span>
+    <button type='button' data-grain='day' class='on'>Day</button>
+    <button type='button' data-grain='week'>Week</button>
+    <button type='button' data-grain='month'>Month</button></div>
+  <div class='group calendar'><span class='name'>Calendar</span>
+    <label for='date-from'>From</label><input id='date-from' type='date'>
+    <label for='date-to'>To</label><input id='date-to' type='date'>
+    <span class='date-error' id='date-error' role='status'></span></div>
+  <div class='group'><span class='name'>Platform</span>
+    <button type='button' data-platform='all' class='on'>All</button>
+    <button type='button' data-platform='ios'>iOS</button>
+    <button type='button' data-platform='android'>Android</button></div>
+  <div class='group source-group' id='source-filters'><span class='name'>Source</span></div>
+  <span id='slice'></span>
+</div>
+
+<div class='kpis' id='kpis'></div>
+<div class='grid'><section class='panel' id='chart-installs'><h3>Installs per day</h3><p class='sub'>Paid from native platforms; Organic from AppsFlyer.</p><div class='plot'></div><div class='keys'></div></section><section class='panel' id='chart-spend'><h3>Spend per day</h3><p class='sub'>Native paid spend by channel.</p><div class='plot'></div><div class='keys'></div></section><section class='panel' id='chart-impressions'><h3>Impressions per day</h3><p class='sub'>Native ad-platform and store-console impressions.</p><div class='plot'></div><div class='keys'></div></section><section class='panel' id='chart-play-devices'><h3>Google Play device reach per day</h3><p class='sub'>Daily unique devices per traffic source. Week/Month show device-days, not unique period reach. Sources overlap and are never added; missing days remain gaps.</p><div class='plot'></div><div class='keys'></div></section><section class='panel' id='chart-money'><h3>Spend, revenue &amp; ROI</h3><p class='sub'>Paid spend, revenue and activity ROI.</p><div class='plot'></div><div class='keys'></div></section><section class='panel' id='chart-gap'><h3>AppsFlyer attribution coverage</h3><p class='sub'>AppsFlyer attributed installs ÷ native paid installs.</p><div class='plot'></div><div class='keys'></div></section><section class='panel' id='chart-cpi'><h3>CPI per day</h3><p class='sub'>Paid spend ÷ native installs.</p><div class='plot'></div><div class='keys'></div></section><section class='panel' id='chart-registration-cost'><h3>Cost per registration</h3><p class='sub'>Paid spend ÷ paid registrations on activity date.</p><div class='plot'></div><div class='keys'></div></section><section class='panel' id='chart-events'><h3>Users &amp; inventories by funnel stage per day</h3><p class='sub'>AppsFlyer users and BigQuery inventories.</p><div class='plot'></div><div class='keys'></div></section><section class='panel' id='chart-funnel-drop'><h3>Install → inventory conversion per day</h3><p class='sub'>Inventory users ÷ AppsFlyer installs.</p><div class='plot'></div><div class='keys'></div></section><section class='panel' id='chart-estimated-credit'><h3>Cost per modeled credit used</h3><p class='sub'>Paid channels only. Paid spend ÷ BigQuery signatures modeled by install share; Meta unavailable.</p><div class='plot'></div><div class='keys'></div></section><section class='panel' id='chart-credit'><h3>Cost per signed inventory &amp; first-time signed user</h3><p class='sub'>Product-wide BigQuery costs; Source and Platform filters do not apply.</p><div class='plot'></div><div class='keys'></div></section></div>
+<section class='summary-section' aria-labelledby='summary-title'>
+  <h2 id='summary-title'>Performance by media source</h2>
+  <p class='sub'>AppsFlyer-style summary for the active filters. Event columns sum daily unique users; they do not claim cross-day deduplication. Total ROI uses all active-source revenue against active paid spend.</p>
+  <div id='summary-table-host'></div>
+</section>
+
+<footer>On paid channels the platform export is the source of truth for spend and installs; AppsFlyer under-attributes them. Organic is AppsFlyer only. Events and revenue come from the daily Partners reports on activity dates; event values are sums of daily unique users and are not deduplicated across days. ROI includes paid and Organic revenue against paid spend: it is an activity-date view, not cohort ROI, and stays unavailable when revenue is not measured. Data stops at 2026-09-02. Aggregate output only — no user-level record reaches this page.</footer>
+</div>
+<div id='tooltip' hidden></div>
+<script>window.__PAID_DAILY__ = {"daily_rows": [{"af_complete_registration_events": 1.0, "af_complete_registration_users": 1.0, "af_purchase_events": 0.0, "af_purchase_users": 0.0, "availability": "available", "campaign_key": "__no_campaign__", "campaign_name": null, "channel_display": "Google App Campaigns", "clicks": 70.0, "cost_grain": "account_day", "cost_per_af_complete_registration_eur": 10.5, "cost_per_af_purchase_eur": null, "cost_per_credit_used_eur": 10.5, "cost_per_credit_used_user_eur": 10.5, "cpi_attributed_eur": 5.25, "cpi_eur": 3.5, "credit_used_events": 1.0, "credit_used_users": 1.0, "date": "2026-09-01", "events_basis": "activity_date", "flags": ["attribution_campaign_not_available", "cost_grain_account_level", "events_from_partners_daily", "install_gap_high", "installs_from_daily_installs"], "impressions": 1000.0, "install_gap_pct": 0.3333, "installs": 3.0, "installs_af": 2.0, "installs_native": 3.0, "installs_source": "native", "is_paid": true, "media_source_raw": "googleadwords_int", "platform": "android", "purchased_credits": 0, "revenue_eur": 6.5, "revenue_per_install_eur": 2.1667, "roas_daily_activity": 0.619, "spend_eur": 10.5}, {"af_complete_registration_events": 2.0, "af_complete_registration_users": 2.0, "af_purchase_events": 1.0, "af_purchase_users": 1.0, "availability": "available", "campaign_key": "7001", "campaign_name": "Sample Search Campaign", "channel_display": "Apple Ads", "clicks": 90.0, "cost_grain": "campaign_day", "cost_per_af_complete_registration_eur": 6.0, "cost_per_af_purchase_eur": 12.0, "cost_per_credit_used_eur": 12.0, "cost_per_credit_used_user_eur": 12.0, "cpi_attributed_eur": 2.4, "cpi_eur": 2.0, "credit_used_events": 1.0, "credit_used_users": 1.0, "date": "2026-09-01", "events_basis": "activity_date", "flags": ["campaign_inferred_single", "events_from_partners_daily", "install_gap_high", "installs_from_daily_installs"], "impressions": 1200.0, "install_gap_pct": 0.1667, "installs": 6.0, "installs_af": 5.0, "installs_native": 6.0, "installs_source": "native", "is_paid": true, "media_source_raw": "Apple Search Ads", "platform": "ios", "purchased_credits": 0, "revenue_eur": 18.0, "revenue_per_install_eur": 3.0, "roas_daily_activity": 1.5, "spend_eur": 12.0}, {"af_complete_registration_events": 0.0, "af_complete_registration_users": 0.0, "af_purchase_events": 0.0, "af_purchase_users": 0.0, "availability": "available", "campaign_key": "__no_campaign__", "campaign_name": null, "channel_display": "Google App Campaigns", "clicks": 20.0, "cost_grain": "account_day", "cost_per_af_complete_registration_eur": null, "cost_per_af_purchase_eur": null, "cost_per_credit_used_eur": null, "cost_per_credit_used_user_eur": null, "cpi_attributed_eur": 4.0, "cpi_eur": 4.0, "credit_used_events": 0.0, "credit_used_users": 0.0, "date": "2026-09-02", "events_basis": "activity_date", "flags": ["attribution_campaign_not_available", "cost_grain_account_level", "events_from_partners_daily", "installs_from_daily_installs"], "impressions": 300.0, "install_gap_pct": 0.0, "installs": 1.0, "installs_af": 1.0, "installs_native": 1.0, "installs_source": "native", "is_paid": true, "media_source_raw": "googleadwords_int", "platform": "android", "purchased_credits": 0, "revenue_eur": 0.0, "revenue_per_install_eur": 0.0, "roas_daily_activity": 0.0, "spend_eur": 4.0}, {"af_complete_registration_events": null, "af_complete_registration_users": null, "af_purchase_events": null, "af_purchase_users": null, "availability": "no_activity", "campaign_key": "7001", "campaign_name": "Sample Search Campaign", "channel_display": "Apple Ads", "clicks": 0.0, "cost_grain": "campaign_day", "cost_per_af_complete_registration_eur": null, "cost_per_af_purchase_eur": null, "cost_per_credit_used_eur": null, "cost_per_credit_used_user_eur": null, "cpi_attributed_eur": null, "cpi_eur": null, "credit_used_events": null, "credit_used_users": null, "date": "2026-09-02", "events_basis": null, "flags": ["events_daily_not_available"], "impressions": 0.0, "install_gap_pct": null, "installs": 0.0, "installs_af": null, "installs_native": 0.0, "installs_source": "native", "is_paid": true, "media_source_raw": null, "platform": "ios", "purchased_credits": null, "revenue_eur": null, "revenue_per_install_eur": null, "roas_daily_activity": null, "spend_eur": 0.0}], "store_impression_rows": [{"date": "2026-09-01", "impressions": 500.0, "platform": "ios", "source_display": "App Store"}, {"date": "2026-09-02", "impressions": 250.0, "platform": "ios", "source_display": "App Store"}], "google_play_device_impression_rows": [], "product_inventory_rows": [{"date": "2026-09-01", "first_time_signed_users": 0, "inventories_created": 1, "inventories_signed": 0}, {"date": "2026-09-02", "first_time_signed_users": 1, "inventories_created": 1, "inventories_signed": 1}], "estimated_credit_rows": [{"allocation_installs": 3.0, "channel_display": "Google App Campaigns", "credit_used_estimated": 0.3, "credit_used_observed": 1, "date": "2026-09-01", "media_source_raw": "googleadwords_int", "platform": "android"}, {"allocation_installs": 6.0, "channel_display": "Apple Ads", "credit_used_estimated": 0.6, "credit_used_observed": 1, "date": "2026-09-01", "media_source_raw": "Apple Search Ads", "platform": "ios"}, {"allocation_installs": 1.0, "channel_display": "Google App Campaigns", "credit_used_estimated": 0.1, "credit_used_observed": 0, "date": "2026-09-02", "media_source_raw": "googleadwords_int", "platform": "android"}, {"allocation_installs": 0, "channel_display": "Apple Ads", "credit_used_estimated": 0.0, "credit_used_observed": 0, "date": "2026-09-02", "media_source_raw": "Apple Search Ads", "platform": "ios"}], "estimated_credit_summary": {"bigquery_signed_total": 1, "eligible_installs": 10.0, "measurement_gap_total": -1, "method": "full_bigquery_total_by_install_share_excluding_meta_and_referral", "observed_total": 2, "status": "available", "window": ["2026-09-01", "2026-09-02"]}};</script>
+<script>/* Interactive runtime for the paid-daily dashboard.
+   No external libraries: SVG is built by hand and redrawn on every filter change.
+   One unit per plot, stable entity colours, honest gaps for values that are not measured. */
+(function () {
+  const DATA = window.__PAID_DAILY__;
+  const rows = DATA.daily_rows;
+  const playDeviceRows = DATA.google_play_device_impression_rows || [];
+  const storeImpressionRows = DATA.store_impression_rows || [];
+  const productInventoryRows = DATA.product_inventory_rows || [];
+  const estimatedCreditRows = DATA.estimated_credit_rows || [];
+  const estimatedCreditSummary = DATA.estimated_credit_summary || {};
+  const paidSources = new Set(
+    rows.filter((row) => row.is_paid).map((row) => row.channel_display),
+  );
+
+  const CHANNEL_COLOR = {
+    "Apple Ads": "var(--source-apple)",
+    "Google App Campaigns": "var(--source-google)",
+    "Meta": "var(--source-meta)",
+    "Organic": "var(--source-organic)",
+    "Google Play Store": "var(--store-play)",
+    "App Store": "var(--store-app)",
+  };
+  const OTHER = "var(--muted-mark)";
+  const colorOf = (channel) => CHANNEL_COLOR[channel] || OTHER;
+
+  const EVENT_LABEL = {
+    af_complete_registration: "registrations",
+    credit_used: "inventory users",
+    af_purchase: "credit purchasers",
+  };
+  const FUNNEL_COLOR = {
+    install: "var(--event-install)",
+    af_complete_registration: "var(--event-registration)",
+    credit_used: "var(--event-inventory)",
+    af_purchase: "var(--event-purchase)",
+    inventory_created: "var(--product-created)",
+    inventory_signed: "var(--product-signed)",
+  };
+  const GRAIN_LABEL = { day: "day", week: "week", month: "month" };
+
+  const allDates = [...new Set(rows.map((row) => row.date))].sort();
+  const dataMin = allDates[0] || "";
+  const dataMax = allDates[allDates.length - 1] || "";
+  const state = {
+    days: 30,
+    from: null,
+    to: null,
+    grain: "day",
+    platform: "all",
+    sources: new Set(),
+    hidden: new Set(),
+  };
+
+  const num = (value) => (
+    value === null || value === undefined || value === "" ? null : Number(value)
+  );
+  const valuesMeasured = (list) => list.map(num).filter((value) => value !== null);
+  const sumMeasured = (list) => {
+    const measured = valuesMeasured(list);
+    return measured.length ? measured.reduce((total, value) => total + value, 0) : null;
+  };
+  const eur = (value) => (
+    value === null ? "—" : "€" + value.toLocaleString("en-GB", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+  );
+  const int = (value) => (value === null ? "—" : String(Math.round(value)));
+  const decimal = (value, digits = 1) => (value === null ? "—" : value.toFixed(digits));
+  const pct = (value) => (value === null ? "—" : `${value.toFixed(1)}%`);
+  const div = (numerator, denominator) => (
+    numerator === null || numerator === undefined || !denominator ? null : numerator / denominator
+  );
+  const userValue = (row, event) => num(row[event + "_users"]);
+
+  const parseUTC = (date) => new Date(date + "T00:00:00Z");
+  const iso = (date) => date.toISOString().slice(0, 10);
+  const addDays = (date, amount) => {
+    const value = parseUTC(date);
+    value.setUTCDate(value.getUTCDate() + amount);
+    return iso(value);
+  };
+  const later = (a, b) => (a > b ? a : b);
+  const earlier = (a, b) => (a < b ? a : b);
+
+  function selectedBounds() {
+    if (!dataMin || !dataMax) return { from: "", to: "" };
+    if (state.from && state.to) return { from: state.from, to: state.to };
+    if (!state.days) return { from: dataMin, to: dataMax };
+    return { from: later(dataMin, addDays(dataMax, -(state.days - 1))), to: dataMax };
+  }
+
+  function dateFiltered() {
+    const bounds = selectedBounds();
+    let out = rows.filter((row) => row.availability !== "not_available");
+    if (bounds.from) out = out.filter((row) => row.date >= bounds.from && row.date <= bounds.to);
+    return out;
+  }
+
+  function filtered() {
+    let out = dateFiltered();
+    if (state.platform !== "all") out = out.filter((row) => row.platform === state.platform);
+    out = out.filter((row) => state.sources.has(row.channel_display));
+    return out;
+  }
+
+  function channelsIn(list) {
+    const found = [...new Set(list.map((row) => row.channel_display))];
+    const order = ["Apple Ads", "Google App Campaigns", "Meta", "Organic"];
+    return [
+      ...order.filter((channel) => found.includes(channel)),
+      ...found.filter((channel) => !order.includes(channel)).sort(),
+    ];
+  }
+
+  const availableSources = channelsIn(
+    rows.filter((row) => row.availability !== "not_available"),
+  );
+  availableSources.forEach((source) => state.sources.add(source));
+
+  function periodKey(date) {
+    if (state.grain === "day") return date;
+    if (state.grain === "month") return date.slice(0, 7) + "-01";
+    const value = parseUTC(date);
+    const offset = (value.getUTCDay() + 6) % 7;
+    value.setUTCDate(value.getUTCDate() - offset);
+    return iso(value);
+  }
+
+  function naturalPeriodEnd(key) {
+    if (state.grain === "day") return key;
+    if (state.grain === "week") return addDays(key, 6);
+    const value = parseUTC(key);
+    value.setUTCMonth(value.getUTCMonth() + 1);
+    value.setUTCDate(0);
+    return iso(value);
+  }
+
+  const SHORT_MONTH = new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" });
+  const LONG_DATE = new Intl.DateTimeFormat("en-GB", {
+    day: "numeric", month: "short", year: "numeric", timeZone: "UTC",
+  });
+  const MONTH_YEAR = new Intl.DateTimeFormat("en-GB", {
+    month: "short", year: "numeric", timeZone: "UTC",
+  });
+
+  const humanDate = (date) => LONG_DATE.format(parseUTC(date));
+  function compactRange(start, end) {
+    const first = parseUTC(start);
+    const last = parseUTC(end);
+    if (start === end) return `${first.getUTCDate()} ${SHORT_MONTH.format(first)}`;
+    if (first.getUTCMonth() === last.getUTCMonth()) {
+      return `${first.getUTCDate()}–${last.getUTCDate()} ${SHORT_MONTH.format(last)}`;
+    }
+    return `${first.getUTCDate()} ${SHORT_MONTH.format(first)}–${last.getUTCDate()} ${SHORT_MONTH.format(last)}`;
+  }
+
+  function periodsIn(list) {
+    const bounds = selectedBounds();
+    const keys = [...new Set(list.map((row) => periodKey(row.date)))].sort();
+    return keys.map((key) => {
+      const naturalEnd = naturalPeriodEnd(key);
+      const visibleStart = later(key, bounds.from);
+      const visibleEnd = earlier(naturalEnd, bounds.to);
+      const partial = visibleStart !== key || visibleEnd !== naturalEnd;
+      const short = state.grain === "month"
+        ? MONTH_YEAR.format(parseUTC(key))
+        : compactRange(visibleStart, visibleEnd);
+      const full = state.grain === "day"
+        ? humanDate(key)
+        : `${humanDate(visibleStart)} – ${humanDate(visibleEnd)}${partial ? " · partial" : ""}`;
+      return { key, start: visibleStart, end: visibleEnd, short, full, partial };
+    });
+  }
+
+  function panelTitles() {
+    const unit = GRAIN_LABEL[state.grain];
+    const titles = {
+      "chart-installs": `Installs per ${unit}`,
+      "chart-spend": `Spend per ${unit}`,
+      "chart-impressions": `Impressions per ${unit}`,
+      "chart-play-devices": state.grain === "day" ? "Google Play device reach per day" : `Google Play device-days per ${unit}`,
+      "chart-cpi": `CPI per ${unit}`,
+      "chart-events": `Users & inventories by funnel stage per ${unit}`,
+      "chart-funnel-drop": `Install → inventory conversion per ${unit}`,
+    };
+    Object.entries(titles).forEach(([id, title]) => {
+      document.querySelector(`#${id} h3`).textContent = title;
+    });
+  }
+
+  /* ---------------------------------------------------------------- chart core */
+
+  const PAD = { top: 18, right: 16, bottom: 30, left: 50 };
+  const svgNS = "http://www.w3.org/2000/svg";
+
+  function el(name, attrs, parent) {
+    const node = document.createElementNS(svgNS, name);
+    for (const key in attrs) node.setAttribute(key, attrs[key]);
+    if (parent) parent.appendChild(node);
+    return node;
+  }
+
+  function niceMax(value) {
+    if (!value) return 1;
+    const magnitude = Math.pow(10, Math.floor(Math.log10(value)));
+    const steps = [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10];
+    for (const step of steps) if (value <= step * magnitude) return step * magnitude;
+    return 10 * magnitude;
+  }
+
+  function signedBounds(values) {
+    if (!values.length) return { min: -1, max: 1 };
+    let min = Math.min(0, ...values);
+    let max = Math.max(0, ...values);
+    if (min === max) return min === 0 ? { min: -1, max: 1 } : { min: min - 1, max: max + 1 };
+    const pad = (max - min) * 0.08;
+    if (min < 0) min -= pad;
+    if (max > 0) max += pad;
+    return { min, max };
+  }
+
+  const tooltip = document.getElementById("tooltip");
+
+  function showTooltip(event, title, lines) {
+    tooltip.textContent = "";
+    const head = document.createElement("div");
+    head.className = "tt-title";
+    head.textContent = title;
+    tooltip.appendChild(head);
+    lines.forEach((line) => {
+      const row = document.createElement("div");
+      row.className = "tt-row";
+      const key = document.createElement("span");
+      key.className = "tt-key";
+      key.style.background = line.color || "transparent";
+      const value = document.createElement("strong");
+      value.textContent = line.value;
+      const label = document.createElement("span");
+      label.className = "tt-label";
+      label.textContent = line.label;
+      row.append(key, value, label);
+      tooltip.appendChild(row);
+    });
+    tooltip.hidden = false;
+    const box = tooltip.getBoundingClientRect();
+    let x = event.clientX + 14;
+    let y = event.clientY + 14;
+    if (x + box.width > window.innerWidth - 8) x = event.clientX - box.width - 14;
+    if (y + box.height > window.innerHeight - 8) y = event.clientY - box.height - 14;
+    tooltip.style.transform = `translate(${x}px, ${y}px)`;
+  }
+
+  const hideTooltip = () => { tooltip.hidden = true; };
+
+  function frame(host, periods, min, max, formatY) {
+    host.textContent = "";
+    const width = host.clientWidth || 640;
+    const height = host.clientHeight || 260;
+    const svg = el("svg", {
+      width, height, viewBox: `0 0 ${width} ${height}`, role: "img",
+    }, host);
+    const plotW = width - PAD.left - PAD.right;
+    const plotH = height - PAD.top - PAD.bottom;
+    const span = max - min || 1;
+    const y = (value) => PAD.top + ((max - value) / span) * plotH;
+    const band = plotW / Math.max(periods.length, 1);
+
+    for (let index = 0; index <= 4; index++) {
+      const value = min + (span / 4) * index;
+      const isZero = Math.abs(value) < span / 10000;
+      el("line", {
+        x1: PAD.left,
+        x2: width - PAD.right,
+        y1: y(value),
+        y2: y(value),
+        class: isZero ? "axis zero" : "grid",
+      }, svg);
+      const label = el("text", {
+        x: PAD.left - 8,
+        y: y(value) + 4,
+        class: "tick",
+        "text-anchor": "end",
+      }, svg);
+      label.textContent = formatY(value);
+    }
+    const step = Math.max(1, Math.ceil(periods.length / 9));
+    periods.forEach((period, index) => {
+      if (index % step) return;
+      const label = el("text", {
+        x: PAD.left + band * (index + 0.5),
+        y: height - 8,
+        class: "tick",
+        "text-anchor": "middle",
+      }, svg);
+      label.textContent = period.short;
+    });
+    return { svg, width, height, plotH, y, band, pad: PAD, marks: el("g", {}, svg) };
+  }
+
+  function tooltipLines(key, series, fallbackFormat) {
+    return series.map((item) => {
+      const value = item.byPeriod[key];
+      const format = item.format || fallbackFormat;
+      const label = typeof item.tooltipLabel === "function"
+        ? item.tooltipLabel(key)
+        : item.label;
+      return {
+        color: item.color,
+        value: format.value(value === undefined ? null : value),
+        label,
+      };
+    });
+  }
+
+  function hitColumns(ctx, periods, tooltipFor) {
+    const layer = el("g", {}, ctx.svg);
+    const pad = ctx.pad || PAD;
+    periods.forEach((period, index) => {
+      const rect = el("rect", {
+        x: pad.left + ctx.band * index,
+        y: pad.top,
+        width: ctx.band,
+        height: ctx.plotH,
+        class: "hit",
+        tabindex: "0",
+        role: "button",
+        "aria-label": period.full,
+      }, layer);
+      const enter = (event) => {
+        const lines = tooltipFor(period.key);
+        if (lines.length) showTooltip(event, period.full, lines);
+        rect.classList.add("hot");
+      };
+      rect.addEventListener("pointermove", enter);
+      rect.addEventListener("mousemove", enter);
+      rect.addEventListener("focus", () => {
+        const box = rect.getBoundingClientRect();
+        enter({ clientX: box.left + box.width / 2, clientY: box.top + 40 });
+      });
+      const leave = () => { hideTooltip(); rect.classList.remove("hot"); };
+      rect.addEventListener("pointerleave", leave);
+      rect.addEventListener("mouseleave", leave);
+      rect.addEventListener("blur", leave);
+    });
+  }
+
+  const GAP = 2;
+
+  function stackedBars(host, periods, series, format, options = {}) {
+    const totals = periods.map((period) => (
+      sumMeasured(series.map((item) => item.byPeriod[period.key])) || 0
+    ));
+    const max = niceMax(Math.max(...totals, 0));
+    const ctx = frame(host, periods, 0, max, format.axis);
+    const barW = Math.min(24, ctx.band * 0.62);
+    periods.forEach((period, index) => {
+      let baseline = ctx.y(0);
+      series.forEach((item) => {
+        const value = item.byPeriod[period.key];
+        if (value === null || value === undefined || value === 0) return;
+        const top = baseline - (value / max) * ctx.plotH;
+        const height = Math.max(1, baseline - top - GAP);
+        el("rect", {
+          x: PAD.left + ctx.band * index + (ctx.band - barW) / 2,
+          y: top,
+          width: barW,
+          height,
+          rx: 4,
+          fill: item.color,
+          class: "bar",
+        }, ctx.marks);
+        baseline = top;
+      });
+    });
+    const tooltipSeries = options.tooltipSeries || series;
+    hitColumns(ctx, periods, (key) => tooltipLines(key, tooltipSeries, format));
+  }
+
+  function groupedBars(host, periods, series, format, options = {}) {
+    const max = niceMax(Math.max(...periods.map((period) => (
+      Math.max(...series.map((item) => item.byPeriod[period.key] || 0))
+    )), 0));
+    const ctx = frame(host, periods, 0, max, format.axis);
+    const slot = Math.min(24, (ctx.band * 0.72) / series.length);
+    periods.forEach((period, index) => {
+      const groupWidth = slot * series.length;
+      series.forEach((item, position) => {
+        const value = item.byPeriod[period.key];
+        if (value === null || value === undefined || value === 0) return;
+        const top = ctx.y(value);
+        el("rect", {
+          x: PAD.left + ctx.band * index + (ctx.band - groupWidth) / 2 + position * slot,
+          y: top,
+          width: Math.max(2, slot - GAP),
+          height: Math.max(1, ctx.y(0) - top),
+          rx: 4,
+          fill: item.color,
+          class: "bar",
+        }, ctx.marks);
+      });
+    });
+    const tooltipSeries = options.tooltipSeries || series;
+    hitColumns(ctx, periods, (key) => tooltipLines(key, tooltipSeries, format));
+  }
+
+  function comboChart(host, periods, bars, line, barFormat, lineFormat, options = {}) {
+    host.textContent = "";
+    const pad = { top: 26, right: 54, bottom: 30, left: 50 };
+    const width = host.clientWidth || 640;
+    const height = host.clientHeight || 280;
+    const svg = el("svg", {
+      width, height, viewBox: `0 0 ${width} ${height}`, role: "img",
+    }, host);
+    const plotW = width - pad.left - pad.right;
+    const plotH = height - pad.top - pad.bottom;
+    const band = plotW / Math.max(periods.length, 1);
+    const barValues = bars.flatMap((item) => (
+      periods.map((period) => item.byPeriod[period.key])
+        .filter((value) => value !== null && value !== undefined)
+    ));
+    const barMax = niceMax(Math.max(...barValues, 0));
+    const lineValues = line
+      ? periods.map((period) => line.byPeriod[period.key])
+        .filter((value) => value !== null && value !== undefined)
+      : [];
+    const lineBounds = options.signedLine
+      ? signedBounds(lineValues)
+      : { min: 0, max: niceMax(Math.max(...lineValues, 0)) };
+    const lineSpan = lineBounds.max - lineBounds.min || 1;
+    const yBar = (value) => pad.top + plotH - (value / barMax) * plotH;
+    const yLine = (value) => (
+      pad.top + ((lineBounds.max - value) / lineSpan) * plotH
+    );
+    const marks = el("g", {}, svg);
+
+    for (let index = 0; index <= 4; index++) {
+      const fraction = index / 4;
+      const leftValue = barMax * fraction;
+      const rightValue = lineBounds.min + lineSpan * fraction;
+      const y = pad.top + plotH - fraction * plotH;
+      el("line", {
+        x1: pad.left,
+        x2: width - pad.right,
+        y1: y,
+        y2: y,
+        class: Math.abs(rightValue) < lineSpan / 10000 ? "axis zero" : "grid",
+      }, svg);
+      const leftLabel = el("text", {
+        x: pad.left - 8, y: y + 4, class: "tick", "text-anchor": "end",
+      }, svg);
+      leftLabel.textContent = barFormat.axis(leftValue);
+      if (line) {
+        const rightLabel = el("text", {
+          x: width - pad.right + 8, y: y + 4, class: "tick", "text-anchor": "start",
+        }, svg);
+        rightLabel.textContent = lineFormat.axis(rightValue);
+      }
+    }
+
+    const step = Math.max(1, Math.ceil(periods.length / 9));
+    periods.forEach((period, index) => {
+      if (index % step) return;
+      const label = el("text", {
+        x: pad.left + band * (index + 0.5),
+        y: height - 8,
+        class: "tick",
+        "text-anchor": "middle",
+      }, svg);
+      label.textContent = period.short;
+    });
+
+    if (bars.length) {
+      const slot = Math.min(22, (band * 0.72) / bars.length);
+      periods.forEach((period, index) => {
+        const groupWidth = slot * bars.length;
+        bars.forEach((item, position) => {
+          const value = item.byPeriod[period.key];
+          if (value === null || value === undefined || value === 0) return;
+          const top = yBar(value);
+          const x = pad.left + band * index + (band - groupWidth) / 2 + position * slot;
+          el("rect", {
+            x,
+            y: top,
+            width: Math.max(2, slot - GAP),
+            height: Math.max(1, yBar(0) - top),
+            rx: 4,
+            fill: item.color,
+            class: "bar",
+          }, marks);
+          if (periods.length <= 14) {
+            const label = el("text", {
+              x: x + Math.max(2, slot - GAP) / 2,
+              y: Math.max(pad.top + 10, top - 5),
+              class: "value-label",
+              "text-anchor": "middle",
+              fill: item.color,
+            }, marks);
+            label.textContent = barFormat.value(value);
+          }
+        });
+      });
+    }
+
+    if (line) {
+      let path = "";
+      let open = false;
+      periods.forEach((period, index) => {
+        const value = line.byPeriod[period.key];
+        if (value === null || value === undefined) {
+          open = false;
+          return;
+        }
+        const x = pad.left + band * (index + 0.5);
+        path += `${open ? "L" : "M"}${x} ${yLine(value)}`;
+        open = true;
+      });
+      if (path) {
+        el("path", {
+          d: path,
+          fill: "none",
+          stroke: line.color,
+          "stroke-width": line.width || 2.4,
+          "stroke-linejoin": "round",
+          "stroke-linecap": "round",
+        }, marks);
+      }
+      const measuredCount = lineValues.length;
+      periods.forEach((period, index) => {
+        const value = line.byPeriod[period.key];
+        if (value === null || value === undefined) return;
+        const x = pad.left + band * (index + 0.5);
+        const y = yLine(value);
+        el("circle", {
+          cx: x, cy: y, r: line.radius || 4, fill: line.color, class: "dot",
+        }, marks);
+        if (measuredCount <= 16) {
+          const label = el("text", {
+            x,
+            y: Math.max(pad.top + 10, y - 9),
+            class: "value-label",
+            "text-anchor": "middle",
+            fill: line.color,
+          }, marks);
+          label.textContent = lineFormat.value(value);
+        }
+      });
+    }
+
+    const tooltipSeries = options.tooltipSeries || [...bars, ...(line ? [line] : [])];
+    hitColumns({
+      svg, plotH, band, pad,
+    }, periods, (key) => tooltipLines(key, tooltipSeries, barFormat));
+  }
+
+  function lines(host, periods, series, format, options = {}) {
+    const values = series.flatMap((item) => (
+      periods.map((period) => item.byPeriod[period.key])
+        .filter((value) => value !== null && value !== undefined)
+    ));
+    const bounds = options.signed
+      ? signedBounds(values)
+      : { min: 0, max: niceMax(Math.max(...values, 0)) };
+    const ctx = frame(host, periods, bounds.min, bounds.max, format.axis);
+    series.forEach((item) => {
+      let path = "";
+      let open = false;
+      periods.forEach((period, index) => {
+        const value = item.byPeriod[period.key];
+        const x = PAD.left + ctx.band * (index + 0.5);
+        if (value === null || value === undefined) {
+          open = false;
+          return;
+        }
+        path += `${open ? "L" : "M"}${x} ${ctx.y(value)}`;
+        open = true;
+      });
+      if (path) {
+        el("path", {
+          d: path,
+          fill: "none",
+          stroke: item.color,
+          "stroke-width": item.width || 2,
+          "stroke-linejoin": "round",
+          "stroke-linecap": "round",
+        }, ctx.marks);
+      }
+      periods.forEach((period, index) => {
+        const value = item.byPeriod[period.key];
+        if (value === null || value === undefined) return;
+        el("circle", {
+          cx: PAD.left + ctx.band * (index + 0.5),
+          cy: ctx.y(value),
+          r: item.radius || 4,
+          fill: item.color,
+          class: "dot",
+        }, ctx.marks);
+      });
+    });
+    const tooltipSeries = options.tooltipSeries || series;
+    hitColumns(ctx, periods, (key) => tooltipLines(key, tooltipSeries, format));
+  }
+
+  /* ------------------------------------------------------------------- panels */
+
+  function legend(host, series) {
+    host.textContent = "";
+    series.forEach((item) => {
+      const button = document.createElement("button");
+      button.className = "key" + (state.hidden.has(item.key) ? " off" : "");
+      button.type = "button";
+      const swatch = document.createElement("i");
+      swatch.style.background = item.color;
+      const label = document.createElement("span");
+      label.textContent = item.label;
+      button.append(swatch, label);
+      button.addEventListener("click", () => {
+        if (state.hidden.has(item.key)) state.hidden.delete(item.key);
+        else state.hidden.add(item.key);
+        render();
+      });
+      host.appendChild(button);
+    });
+  }
+
+  function byPeriodFor(list, periods, pick) {
+    const map = Object.create(null);
+    periods.forEach((period) => { map[period.key] = null; });
+    list.forEach((row) => {
+      const key = periodKey(row.date);
+      if (!(key in map)) return;
+      const value = pick(row);
+      if (value === null || value === undefined) return;
+      map[key] = (map[key] === null ? 0 : map[key]) + value;
+    });
+    return map;
+  }
+
+  function dailyValues(list, pick) {
+    const map = Object.create(null);
+    list.forEach((row) => {
+      const value = pick(row);
+      if (value === null || value === undefined) return;
+      map[row.date] = (map[row.date] === undefined ? 0 : map[row.date]) + value;
+    });
+    return map;
+  }
+
+  function sumDailyByPeriod(list, periods, pick, coverage = null) {
+    const daily = dailyValues(list, pick);
+    const values = Object.create(null);
+    const measuredDays = Object.create(null);
+    periods.forEach((period) => {
+      let days;
+      if (coverage) {
+        const start = later(period.start, coverage.from);
+        const end = earlier(period.end, coverage.to);
+        days = [];
+        for (let date = start; date <= end; date = addDays(date, 1)) days.push(date);
+      } else {
+        days = Object.keys(daily).filter((date) => date >= period.start && date <= period.end);
+      }
+      measuredDays[period.key] = days.length;
+      values[period.key] = days.length
+        ? days.reduce((total, date) => total + (daily[date] ?? 0), 0)
+        : null;
+    });
+    return { values, measuredDays };
+  }
+
+  function eventCoverage(list) {
+    const dates = list.filter((row) => (
+      Object.keys(EVENT_LABEL).some((event) => userValue(row, event) !== null)
+    )).map((row) => row.date).sort();
+    return dates.length ? { from: dates[0], to: dates[dates.length - 1] } : null;
+  }
+
+  function registrationCoveredRows(list) {
+    const dates = list.filter((row) => (
+      userValue(row, "af_complete_registration") !== null
+    )).map((row) => row.date).sort();
+    if (!dates.length) return [];
+    const from = dates[0];
+    const to = dates[dates.length - 1];
+    return list.filter((row) => row.date >= from && row.date <= to);
+  }
+
+  function productCoverage() {
+    const dates = productInventoryRows.map((row) => row.date).sort();
+    return dates.length ? { from: dates[0], to: dates[dates.length - 1] } : null;
+  }
+
+  function productCoveredRows(list) {
+    const coverage = productCoverage();
+    return coverage
+      ? list.filter((row) => row.date >= coverage.from && row.date <= coverage.to)
+      : [];
+  }
+
+  function ratioMap(numerator, denominator, periods, multiplier = 1) {
+    const map = Object.create(null);
+    periods.forEach((period) => {
+      const top = numerator[period.key];
+      const bottom = denominator[period.key];
+      map[period.key] = top === null || top === undefined || !bottom
+        ? null
+        : (top / bottom) * multiplier;
+    });
+    return map;
+  }
+
+  function measuredSeries(series, periods) {
+    return series.filter((item) => periods.some((period) => {
+      const value = item.byPeriod[period.key];
+      return value !== null && value !== undefined;
+    }));
+  }
+
+  function emptyState(host, message) {
+    host.textContent = "";
+    const empty = document.createElement("p");
+    empty.className = "empty";
+    empty.textContent = message;
+    host.appendChild(empty);
+  }
+
+  function drawPanel(id, periods, allSeries, format, kind, options = {}) {
+    const host = document.querySelector(`#${id} .plot`);
+    const keys = document.querySelector(`#${id} .keys`);
+    const series = measuredSeries(allSeries, periods);
+    const visible = series.filter((item) => !state.hidden.has(item.key));
+    legend(keys, series);
+    if (!periods.length || !visible.length) {
+      emptyState(host, "Nothing to plot in this slice.");
+      return;
+    }
+    const draw = { stacked: stackedBars, grouped: groupedBars, line: lines }[kind];
+    draw(host, periods, visible, format, options);
+  }
+
+  function drawComboPanel(
+    id,
+    periods,
+    allBars,
+    allLine,
+    barFormat,
+    lineFormat,
+    options = {},
+  ) {
+    const host = document.querySelector(`#${id} .plot`);
+    const keys = document.querySelector(`#${id} .keys`);
+    const bars = measuredSeries(allBars, periods);
+    const line = measuredSeries([allLine], periods)[0] || null;
+    const legendSeries = [...bars, ...(line ? [line] : [])];
+    legend(keys, legendSeries);
+    const visibleBars = bars.filter((item) => !state.hidden.has(item.key));
+    const visibleLine = line && !state.hidden.has(line.key) ? line : null;
+    if (!periods.length || (!visibleBars.length && !visibleLine)) {
+      emptyState(host, "Nothing to plot in this slice.");
+      return;
+    }
+    const tooltipSeries = [...visibleBars, ...(visibleLine ? [visibleLine] : [])];
+    comboChart(host, periods, visibleBars, visibleLine, barFormat, lineFormat, {
+      ...options,
+      tooltipSeries,
+    });
+  }
+
+  const FORMAT_EUR = {
+    axis: (value) => "€" + (Math.abs(value) >= 100
+      ? Math.round(value)
+      : value.toFixed(Math.abs(value) < 10 ? 1 : 0)),
+    value: eur,
+  };
+  const FORMAT_INT = { axis: (value) => String(Math.round(value)), value: int };
+  const FORMAT_DECIMAL = { axis: (value) => decimal(value, 1), value: (value) => decimal(value, 1) };
+  const FORMAT_PCT = {
+    axis: (value) => `${Math.round(value)}%`,
+    value: pct,
+  };
+  const FORMAT_ROI_UNIT = {
+    axis: (value) => decimal(value, 1),
+    value: (value) => decimal(value, 2),
+  };
+
+  function kpis(list) {
+    const paid = list.filter((row) => row.is_paid);
+    const registrationPaid = registrationCoveredRows(paid);
+    const spend = sumMeasured(paid.map((row) => row.spend_eur));
+    const installs = sumMeasured(paid.map((row) => row.installs));
+    const revenue = sumMeasured(list.map((row) => row.revenue_eur));
+    const credits = sumMeasured(list.map((row) => userValue(row, "credit_used")));
+    const registrations = sumMeasured(list.map((row) => userValue(row, "af_complete_registration")));
+    const paidRegistrations = sumMeasured(
+      registrationPaid.map((row) => userValue(row, "af_complete_registration")),
+    );
+    const registrationSpend = sumMeasured(registrationPaid.map((row) => row.spend_eur));
+    const tiles = [
+      { label: "Paid spend", value: eur(spend), note: "native exports" },
+      { label: "Paid installs", value: int(installs), note: "platform export (native)" },
+      {
+        label: "Paid CPI",
+        value: installs !== null && installs >= 3 ? eur(div(spend, installs)) : "—",
+        note: "active paid-source spend ÷ platform installs",
+      },
+      { label: "Revenue", value: eur(revenue), note: "gross, on activity date" },
+      { label: "Inventory users", value: int(credits), note: "sum of daily unique users, activity date" },
+      { label: "Registrations", value: int(registrations), note: "sum of daily unique users, activity date" },
+      {
+        label: "Cost / registration",
+        value: eur(div(registrationSpend, paidRegistrations)),
+        note: "paid spend ÷ paid registrations",
+      },
+    ];
+    const host = document.getElementById("kpis");
+    host.textContent = "";
+    tiles.forEach((tile) => {
+      const card = document.createElement("div");
+      card.className = "kpi";
+      const label = document.createElement("span");
+      label.className = "label";
+      label.textContent = tile.label;
+      const value = document.createElement("span");
+      value.className = "value";
+      value.textContent = tile.value;
+      const note = document.createElement("span");
+      note.className = "note";
+      note.textContent = tile.note;
+      card.append(label, value, note);
+      host.appendChild(card);
+    });
+  }
+
+  function roiByPeriod(paidRows, revenueRows, periods) {
+    const spendDaily = dailyValues(paidRows, (row) => num(row.spend_eur));
+    const revenueDaily = dailyValues(revenueRows, (row) => num(row.revenue_eur));
+    const roi = Object.create(null);
+    const coverageLabel = Object.create(null);
+    periods.forEach((period) => {
+      const spendDates = Object.keys(spendDaily).filter((date) => (
+        date >= period.start && date <= period.end && spendDaily[date] !== null
+      ));
+      const coveredDates = spendDates.filter((date) => revenueDaily[date] !== undefined);
+      const spend = sumMeasured(coveredDates.map((date) => spendDaily[date]));
+      const revenue = sumMeasured(coveredDates.map((date) => revenueDaily[date]));
+      roi[period.key] = spend ? (revenue - spend) / spend : null;
+      coverageLabel[period.key] = coveredDates.length < spendDates.length
+        ? `ROI · partial revenue coverage ${coveredDates.length}/${spendDates.length}d`
+        : "ROI";
+    });
+    return { roi, coverageLabel };
+  }
+
+  function moneyPanel(periods, paidRows, organicRows) {
+    const spend = byPeriodFor(paidRows, periods, (row) => num(row.spend_eur));
+    const paidRevenue = byPeriodFor(paidRows, periods, (row) => num(row.revenue_eur));
+    const organicRevenue = byPeriodFor(organicRows, periods, (row) => num(row.revenue_eur));
+    const roiData = roiByPeriod(paidRows, [...paidRows, ...organicRows], periods);
+    const bars = [
+      {
+        key: "money:spend", label: "paid spend", color: "var(--metric-spend)",
+        byPeriod: spend, format: FORMAT_EUR,
+      },
+      {
+        key: "money:revenue", label: "paid revenue", color: "var(--metric-revenue)",
+        byPeriod: paidRevenue, format: FORMAT_EUR,
+      },
+      {
+        key: "money:organic-revenue", label: "organic revenue", color: "var(--source-organic)",
+        byPeriod: organicRevenue, format: FORMAT_EUR,
+      },
+    ];
+    const roiLine = {
+      key: "money:roi",
+      label: "ROI",
+      color: "var(--mixed)",
+      byPeriod: roiData.roi,
+      format: FORMAT_ROI_UNIT,
+      tooltipLabel: (key) => roiData.coverageLabel[key],
+      width: 2.5,
+    };
+    drawComboPanel(
+      "chart-money",
+      periods,
+      bars,
+      roiLine,
+      FORMAT_EUR,
+      FORMAT_ROI_UNIT,
+      { signedLine: true },
+    );
+  }
+
+  function sourceSummary(
+    list,
+    label,
+    signedInventories = null,
+    firstTimeSignedUsers = null,
+    productCostSpend = null,
+  ) {
+    const paid = list.filter((row) => row.is_paid);
+    const registrationPaid = registrationCoveredRows(paid);
+    const spend = sumMeasured(paid.map((row) => row.spend_eur));
+    const paidInstalls = sumMeasured(paid.map((row) => row.installs));
+    const installs = sumMeasured(list.map((row) => row.installs));
+    const registrations = sumMeasured(
+      list.map((row) => userValue(row, "af_complete_registration")),
+    );
+    const paidRegistrations = sumMeasured(
+      registrationPaid.map((row) => userValue(row, "af_complete_registration")),
+    );
+    const registrationSpend = sumMeasured(registrationPaid.map((row) => row.spend_eur));
+    const inventory = sumMeasured(list.map((row) => userValue(row, "credit_used")));
+    const purchasers = sumMeasured(list.map((row) => userValue(row, "af_purchase")));
+    const revenue = sumMeasured(list.map((row) => row.revenue_eur));
+    return {
+      label,
+      spend,
+      installs,
+      registrations,
+      inventory,
+      purchasers,
+      revenue,
+      cpi: paidInstalls !== null && paidInstalls >= 3 ? div(spend, paidInstalls) : null,
+      costPerRegistration: div(registrationSpend, paidRegistrations),
+      costPerSignedInventory: div(productCostSpend, signedInventories),
+      costPerFirstTimeSignedUser: div(productCostSpend, firstTimeSignedUsers),
+      roi: spend && revenue !== null ? (revenue - spend) / spend : null,
+    };
+  }
+
+  function sourceCell(label) {
+    const wrapper = document.createElement("span");
+    wrapper.className = "source-name";
+    const swatch = document.createElement("i");
+    swatch.style.background = label === "Total" ? "var(--mixed)" : colorOf(label);
+    const text = document.createElement("span");
+    text.textContent = label;
+    wrapper.append(swatch, text);
+    return wrapper;
+  }
+
+  function summaryTable(list, productRows, allPaidRows) {
+    const host = document.getElementById("summary-table-host");
+    host.textContent = "";
+    if (!list.length) {
+      emptyState(host, "No source is active for this slice.");
+      return;
+    }
+    const columns = [
+      { label: "Media source", key: "label" },
+      { label: "Spend", key: "spend", format: eur },
+      { label: "Installs", key: "installs", format: int },
+      { label: "Registrations", key: "registrations", format: int },
+      { label: "Inventory users", key: "inventory", format: int },
+      { label: "Credit purchasers", key: "purchasers", format: int },
+      { label: "Revenue", key: "revenue", format: eur },
+      { label: "Paid CPI", key: "cpi", format: eur },
+      { label: "Cost / registration", key: "costPerRegistration", format: eur },
+      { label: "Cost / signed inventory", key: "costPerSignedInventory", format: eur },
+      { label: "Cost / first-time signed user", key: "costPerFirstTimeSignedUser", format: eur },
+      { label: "ROI (unit)", key: "roi", format: FORMAT_ROI_UNIT.value, mixed: true },
+    ];
+    const table = document.createElement("table");
+    const head = document.createElement("thead");
+    const headRow = document.createElement("tr");
+    columns.forEach((column) => {
+      const cell = document.createElement("th");
+      cell.scope = "col";
+      cell.textContent = column.label;
+      headRow.appendChild(cell);
+    });
+    head.appendChild(headRow);
+
+    const body = document.createElement("tbody");
+    channelsIn(list).forEach((channel) => {
+      const values = sourceSummary(
+        list.filter((row) => row.channel_display === channel),
+        channel,
+      );
+      const line = document.createElement("tr");
+      columns.forEach((column) => {
+        const cell = document.createElement("td");
+        if (column.key === "label") cell.appendChild(sourceCell(values.label));
+        else cell.textContent = column.format(values[column.key]);
+        if (column.mixed) cell.className = "metric-mixed";
+        line.appendChild(cell);
+      });
+      body.appendChild(line);
+    });
+
+    const foot = document.createElement("tfoot");
+    const totalLine = document.createElement("tr");
+    const signedInventories = sumMeasured(
+      productRows.map((row) => num(row.inventories_signed)),
+    );
+    const firstTimeSignedUsers = sumMeasured(
+      productRows.map((row) => num(row.first_time_signed_users)),
+    );
+    const productCostSpend = sumMeasured(
+      productCoveredRows(allPaidRows).map((row) => row.spend_eur),
+    );
+    const totals = sourceSummary(
+      list,
+      "Total",
+      signedInventories,
+      firstTimeSignedUsers,
+      productCostSpend,
+    );
+    columns.forEach((column) => {
+      const cell = document.createElement("td");
+      if (column.key === "label") cell.appendChild(sourceCell(totals.label));
+      else cell.textContent = column.format(totals[column.key]);
+      if (column.mixed) cell.className = "metric-mixed";
+      totalLine.appendChild(cell);
+    });
+    foot.appendChild(totalLine);
+    table.append(head, body, foot);
+    host.appendChild(table);
+  }
+
+  function render() {
+    const list = filtered();
+    const dateRows = dateFiltered();
+    const paidRowsAllSources = dateRows.filter((row) => row.is_paid);
+    const productBounds = selectedBounds();
+    const visibleProductInventories = productInventoryRows.filter((row) => (
+      (!productBounds.from || row.date >= productBounds.from)
+      && (!productBounds.to || row.date <= productBounds.to)
+    ));
+    const periods = periodsIn([...list, ...visibleProductInventories]);
+    const channels = channelsIn(list);
+    const paidRows = list.filter((row) => row.is_paid);
+    const organicRows = list.filter((row) => row.channel_display === "Organic");
+    panelTitles();
+    kpis(list);
+
+    const installSeries = channels.map((channel) => ({
+      key: "inst:" + channel,
+      label: channel,
+      color: colorOf(channel),
+      byPeriod: byPeriodFor(
+        list.filter((row) => row.channel_display === channel),
+        periods,
+        (row) => num(row.installs),
+      ),
+    }));
+    drawPanel("chart-installs", periods, installSeries, FORMAT_INT, "stacked");
+
+    const spendSeries = channels.filter((channel) => channel !== "Organic").map((channel) => ({
+      key: "spend:" + channel,
+      label: channel,
+      color: colorOf(channel),
+      byPeriod: byPeriodFor(
+        list.filter((row) => row.channel_display === channel),
+        periods,
+        (row) => num(row.spend_eur),
+      ),
+    }));
+    drawPanel("chart-spend", periods, spendSeries, FORMAT_EUR, "stacked");
+
+    const impressionSeries = channels.filter((channel) => channel !== "Organic").map((channel) => ({
+      key: "impressions:" + channel,
+      label: channel,
+      color: colorOf(channel),
+      byPeriod: byPeriodFor(
+        list.filter((row) => row.channel_display === channel),
+        periods,
+        (row) => num(row.impressions),
+      ),
+    }));
+    const bounds = selectedBounds();
+    const visibleStoreImpressions = storeImpressionRows.filter((row) => (
+      (state.platform === "all" || row.platform === state.platform)
+      && (!bounds.from || (row.date >= bounds.from && row.date <= bounds.to))
+    ));
+    [...new Set(visibleStoreImpressions.map((row) => row.source_display))].forEach((source) => {
+      impressionSeries.push({
+        key: "impressions:" + source,
+        label: source,
+        color: colorOf(source),
+        byPeriod: byPeriodFor(
+          visibleStoreImpressions.filter((row) => row.source_display === source),
+          periods,
+          (row) => num(row.impressions),
+        ),
+      });
+    });
+    drawPanel("chart-impressions", periods, impressionSeries, FORMAT_INT, "line");
+
+    const visiblePlayDevices = playDeviceRows.filter((row) => (
+      (state.platform === "all" || row.platform === state.platform)
+      && (!bounds.from || (row.date >= bounds.from && row.date <= bounds.to))
+    ));
+    const deviceSeries = [...new Set(visiblePlayDevices.map((row) => row.traffic_source))].sort().map((source, index) => ({
+      key: "play-devices:" + source,
+      label: source,
+      color: index === 0 ? "var(--store-play)" : "var(--store-app)",
+      byPeriod: byPeriodFor(
+        visiblePlayDevices.filter((row) => row.traffic_source === source),
+        periods, (row) => num(row.device_impressions),
+      ),
+    }));
+    drawPanel("chart-play-devices", periods, deviceSeries, FORMAT_INT, "line");
+
+    moneyPanel(periods, paidRows, organicRows);
+
+    const native = byPeriodFor(paidRows, periods, (row) => num(row.installs_native));
+    const attributed = byPeriodFor(paidRows, periods, (row) => num(row.installs_af));
+    const coverage = ratioMap(attributed, native, periods, 100);
+    const coverageBars = [
+      {
+        key: "coverage:native", label: "native paid installs", color: "var(--event-install)",
+        byPeriod: native, format: FORMAT_INT,
+      },
+      {
+        key: "coverage:af-count", label: "AppsFlyer attributed installs", color: "var(--event-registration)",
+        byPeriod: attributed, format: FORMAT_INT,
+      },
+    ];
+    const coverageLine = {
+      key: "coverage:af",
+      label: "AppsFlyer coverage",
+      color: "var(--mixed)",
+      byPeriod: coverage,
+      format: FORMAT_PCT,
+      width: 2.5,
+    };
+    drawComboPanel(
+      "chart-gap",
+      periods,
+      coverageBars,
+      coverageLine,
+      FORMAT_INT,
+      FORMAT_PCT,
+    );
+
+    const cpiSeries = channels.filter((channel) => channel !== "Organic").map((channel) => {
+      const channelRows = list.filter((row) => row.channel_display === channel);
+      const spend = byPeriodFor(channelRows, periods, (row) => num(row.spend_eur));
+      const installs = byPeriodFor(channelRows, periods, (row) => num(row.installs));
+      return {
+        key: "cpi:" + channel,
+        label: channel,
+        color: colorOf(channel),
+        byPeriod: ratioMap(spend, installs, periods),
+      };
+    });
+    drawPanel("chart-cpi", periods, cpiSeries, FORMAT_EUR, "line");
+
+    const registrationCostSeries = channels.filter((channel) => paidSources.has(channel)).map((channel) => {
+      const channelRows = registrationCoveredRows(
+        paidRows.filter((row) => row.channel_display === channel),
+      );
+      const spend = byPeriodFor(channelRows, periods, (row) => num(row.spend_eur));
+      const registrations = byPeriodFor(
+        channelRows,
+        periods,
+        (row) => userValue(row, "af_complete_registration"),
+      );
+      return {
+        key: "registration-cost:" + channel,
+        label: channel,
+        color: colorOf(channel),
+        byPeriod: ratioMap(spend, registrations, periods),
+        tooltipLabel: () => `${channel} · cost per registration`,
+      };
+    });
+    drawPanel(
+      "chart-registration-cost",
+      periods,
+      registrationCostSeries,
+      FORMAT_EUR,
+      "line",
+    );
+
+    const eventWindow = eventCoverage(list);
+    const funnelStages = [
+      { key: "install", label: "AppsFlyer installs", pick: (row) => num(row.installs_af) },
+      {
+        key: "af_complete_registration",
+        label: EVENT_LABEL.af_complete_registration,
+        pick: (row) => userValue(row, "af_complete_registration"),
+      },
+      {
+        key: "credit_used",
+        label: EVENT_LABEL.credit_used,
+        pick: (row) => userValue(row, "credit_used"),
+      },
+      {
+        key: "af_purchase",
+        label: EVENT_LABEL.af_purchase,
+        pick: (row) => userValue(row, "af_purchase"),
+      },
+    ];
+    const funnelTotals = Object.create(null);
+    const eventSeries = funnelStages.map((stage) => {
+      const total = sumDailyByPeriod(list, periods, stage.pick, eventWindow);
+      funnelTotals[stage.key] = total;
+      return {
+        key: "ev:" + stage.key,
+        label: stage.label,
+        color: FUNNEL_COLOR[stage.key],
+        byPeriod: total.values,
+        format: FORMAT_INT,
+        tooltipLabel: (key) => state.grain === "day"
+          ? stage.label
+          : `${stage.label} · sum · ${total.measuredDays[key]}d measured`,
+      };
+    });
+    [
+      {
+        key: "inventory_created",
+        label: "inventories created",
+        field: "inventories_created",
+      },
+      {
+        key: "inventory_signed",
+        label: "inventories signed",
+        field: "inventories_signed",
+      },
+    ].forEach((stage) => {
+      const total = sumDailyByPeriod(
+        visibleProductInventories,
+        periods,
+        (row) => num(row[stage.field]),
+      );
+      eventSeries.push({
+        key: "ev:" + stage.key,
+        label: stage.label,
+        color: FUNNEL_COLOR[stage.key],
+        byPeriod: total.values,
+        format: FORMAT_INT,
+        tooltipLabel: (key) => state.grain === "day"
+          ? stage.label
+          : `${stage.label} · sum · ${total.measuredDays[key]}d measured`,
+      });
+    });
+    drawPanel(
+      "chart-events",
+      periods,
+      eventSeries,
+      FORMAT_INT,
+      "grouped",
+    );
+
+    const conversionByPeriod = ratioMap(
+      funnelTotals.credit_used.values,
+      funnelTotals.install.values,
+      periods,
+      100,
+    );
+    const conversionSeries = [{
+      key: "funnel:conversion",
+      label: "inventory / AppsFlyer installs",
+      color: "var(--mixed)",
+      byPeriod: conversionByPeriod,
+      format: FORMAT_PCT,
+      width: 2.6,
+    }];
+    drawPanel("chart-funnel-drop", periods, conversionSeries, FORMAT_PCT, "line", {
+      tooltipSeries: [
+        {
+          key: "funnel:install",
+          label: state.grain === "day" ? "AppsFlyer installs" : "AppsFlyer installs · sum",
+          color: FUNNEL_COLOR.install,
+          byPeriod: funnelTotals.install.values,
+          format: FORMAT_INT,
+        },
+        {
+          key: "funnel:inventory",
+          label: state.grain === "day" ? "inventory unique users" : "inventory users · sum",
+          color: FUNNEL_COLOR.credit_used,
+          byPeriod: funnelTotals.credit_used.values,
+          format: FORMAT_INT,
+        },
+        ...conversionSeries,
+      ],
+    });
+
+    const signedInventories = byPeriodFor(
+      visibleProductInventories,
+      periods,
+      (row) => num(row.inventories_signed),
+    );
+    const firstTimeSignedUsers = byPeriodFor(
+      visibleProductInventories,
+      periods,
+      (row) => num(row.first_time_signed_users),
+    );
+
+    const estimateWindow = estimatedCreditSummary.window || [];
+    const estimateFrom = estimateWindow[0];
+    const estimateTo = estimateWindow[1];
+    const visibleEstimatedCredits = estimatedCreditRows.filter((row) => (
+      (!productBounds.from || row.date >= productBounds.from)
+      && (!productBounds.to || row.date <= productBounds.to)
+      && (state.platform === "all" || row.platform === state.platform)
+      && state.sources.has(row.channel_display)
+      && paidSources.has(row.channel_display)
+    ));
+    const estimatedCoveredSpendRows = paidRows.filter((row) => (
+      estimateFrom && estimateTo && row.date >= estimateFrom && row.date <= estimateTo
+    ));
+    const estimatedSpend = byPeriodFor(
+      estimatedCoveredSpendRows, periods, (row) => num(row.spend_eur),
+    );
+    const allocationInstalls = byPeriodFor(
+      visibleEstimatedCredits, periods, (row) => num(row.allocation_installs),
+    );
+    const estimatedCredits = byPeriodFor(
+      visibleEstimatedCredits, periods, (row) => num(row.credit_used_estimated),
+    );
+    const costPerEstimatedCredit = ratioMap(estimatedSpend, estimatedCredits, periods);
+    const estimatedCostSeries = [{
+      key: "estimated-credit:cost",
+      label: "cost per modeled credit used",
+      color: "var(--mixed)",
+      byPeriod: costPerEstimatedCredit,
+      format: FORMAT_EUR,
+    }];
+    drawPanel("chart-estimated-credit", periods, estimatedCostSeries, FORMAT_EUR, "line", {
+      tooltipSeries: [
+        {
+          key: "estimated-credit:spend", label: "active paid cost", color: "var(--metric-spend)",
+          byPeriod: estimatedSpend, format: FORMAT_EUR,
+        },
+        {
+          key: "estimated-credit:installs", label: "install weight · authoritative",
+          color: "var(--event-install)", byPeriod: allocationInstalls, format: FORMAT_DECIMAL,
+        },
+        {
+          key: "estimated-credit:total", label: "credit used · modeled from install share",
+          color: "var(--product-signed)", byPeriod: estimatedCredits, format: FORMAT_DECIMAL,
+        },
+        ...estimatedCostSeries,
+      ],
+    });
+
+    const productSpend = byPeriodFor(
+      productCoveredRows(paidRowsAllSources),
+      periods,
+      (row) => num(row.spend_eur),
+    );
+    const costPerSignedInventory = ratioMap(productSpend, signedInventories, periods);
+    const costPerFirstTimeSignedUser = ratioMap(productSpend, firstTimeSignedUsers, periods);
+    const inventorySeries = [
+      {
+        key: "inventory:cost-unit",
+        label: "cost per signed inventory",
+        color: "var(--mixed)",
+        byPeriod: costPerSignedInventory,
+        format: FORMAT_EUR,
+      },
+      {
+        key: "inventory:cost-user",
+        label: "cost per first-time signed user",
+        color: "var(--event-inventory)",
+        byPeriod: costPerFirstTimeSignedUser,
+        format: FORMAT_EUR,
+      },
+    ];
+    const inventoryTooltip = [
+      {
+        key: "inventory:spend", label: "paid cost inside BigQuery coverage", color: "var(--metric-spend)",
+        byPeriod: productSpend, format: FORMAT_EUR,
+      },
+      {
+        key: "inventory:units", label: "signed inventories", color: "var(--mixed)",
+        byPeriod: signedInventories, format: FORMAT_INT,
+      },
+      {
+        key: "inventory:users", label: "first-time signed users", color: "var(--event-inventory)",
+        byPeriod: firstTimeSignedUsers, format: FORMAT_INT,
+      },
+      ...inventorySeries,
+    ];
+    drawPanel("chart-credit", periods, inventorySeries, FORMAT_EUR, "line", {
+      tooltipSeries: inventoryTooltip,
+    });
+
+    summaryTable(list, visibleProductInventories, paidRowsAllSources);
+    const selected = selectedBounds();
+    const custom = state.from && state.to ? " · custom range" : "";
+    const activeSources = availableSources.filter((source) => state.sources.has(source));
+    document.getElementById("slice").textContent =
+      `${periods.length} ${GRAIN_LABEL[state.grain]}${periods.length === 1 ? "" : "s"} · ` +
+      `${selected.from || "—"} → ${selected.to || "—"} · platform: ${state.platform} · ` +
+      `sources: ${activeSources.length ? activeSources.join(", ") : "none"}${custom}`;
+  }
+
+  /* ------------------------------------------------------------------ controls */
+
+  const fromInput = document.getElementById("date-from");
+  const toInput = document.getElementById("date-to");
+  const dateError = document.getElementById("date-error");
+  [fromInput, toInput].forEach((input) => {
+    input.min = dataMin;
+    input.max = dataMax;
+  });
+
+  function clearDateError() {
+    dateError.textContent = "";
+    fromInput.removeAttribute("aria-invalid");
+    toInput.removeAttribute("aria-invalid");
+  }
+
+  function updateCustomRange() {
+    clearDateError();
+    if (!fromInput.value || !toInput.value) return;
+    if (fromInput.value > toInput.value) {
+      dateError.textContent = "From must be before To.";
+      fromInput.setAttribute("aria-invalid", "true");
+      toInput.setAttribute("aria-invalid", "true");
+      return;
+    }
+    state.from = fromInput.value;
+    state.to = toInput.value;
+    state.days = null;
+    document.querySelectorAll("[data-range]").forEach((button) => button.classList.remove("on"));
+    render();
+  }
+
+  fromInput.addEventListener("change", updateCustomRange);
+  toInput.addEventListener("change", updateCustomRange);
+
+  document.querySelectorAll("[data-range]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.days = Number(button.dataset.range);
+      state.from = null;
+      state.to = null;
+      fromInput.value = "";
+      toInput.value = "";
+      clearDateError();
+      document.querySelectorAll("[data-range]").forEach((other) => (
+        other.classList.toggle("on", other === button)
+      ));
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-grain]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.grain = button.dataset.grain;
+      document.querySelectorAll("[data-grain]").forEach((other) => (
+        other.classList.toggle("on", other === button)
+      ));
+      render();
+    });
+  });
+
+  document.querySelectorAll("[data-platform]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.platform = button.dataset.platform;
+      document.querySelectorAll("[data-platform]").forEach((other) => (
+        other.classList.toggle("on", other === button)
+      ));
+      render();
+    });
+  });
+
+  const sourceFilters = document.getElementById("source-filters");
+  availableSources.forEach((source) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "source-toggle on";
+    button.dataset.source = source;
+    button.setAttribute("aria-pressed", "true");
+    button.title = "From All, click to isolate; then click sources to add or remove them";
+    const swatch = document.createElement("i");
+    swatch.style.background = colorOf(source);
+    const label = document.createElement("span");
+    label.textContent = source;
+    button.append(swatch, label);
+    button.addEventListener("click", () => {
+      const allActive = state.sources.size === availableSources.length;
+      const active = state.sources.has(source);
+      if (allActive) {
+        state.sources.clear();
+        state.sources.add(source);
+      } else if (active && state.sources.size === 1) {
+        availableSources.forEach((item) => state.sources.add(item));
+      } else if (active) {
+        state.sources.delete(source);
+      } else {
+        state.sources.add(source);
+      }
+      sourceFilters.querySelectorAll("[data-source]").forEach((item) => {
+        const active = state.sources.has(item.dataset.source);
+        item.classList.toggle("on", active);
+        item.setAttribute("aria-pressed", String(active));
+      });
+      render();
+    });
+    sourceFilters.appendChild(button);
+  });
+
+  let resizeTimer = null;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(render, 120);
+  });
+
+  render();
+})();
+</script>
+</body></html>

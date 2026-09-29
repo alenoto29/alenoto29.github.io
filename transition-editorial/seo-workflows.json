@@ -1,0 +1,34 @@
+[
+  {
+    "id": "page-checker",
+    "title": "Page checker",
+    "input": "A saved HTML page and configurable checking rules.",
+    "steps": ["Extract headings, readable text and links from the HTML.", "Check page structure, heading patterns and Italian readability.", "Review the findings and decide what needs editing."],
+    "output": "A JSON report with checks and findings.",
+    "note": "The public tool checks local HTML. It does not verify facts, visit links or test the page in a browser."
+  },
+  {
+    "id": "costanti",
+    "title": "Costanti / price updates",
+    "input": "The current price-constant CSV and a compatible tariff snapshot.",
+    "steps": ["Read the source prices and match offers to existing entries.", "Review changes, new offers and cases that need a decision.", "Generate proposed CSV updates while preserving existing references."],
+    "output": "Changed rows, new entries and a proposed full catalogue.",
+    "note": "The tool prepares files for review. Importing them into a CMS remains a separate step."
+  },
+  {
+    "id": "offer-page-updater",
+    "title": "Offer-page updates",
+    "input": "Offer data and an HTML page with a designated offers block.",
+    "steps": ["Validate the supplied offers and the comparison assumptions.", "Prepare the updated offers block while keeping the rest of the page intact.", "Review the preview and changes before uploading the page."],
+    "output": "A proposed HTML update and a reviewable record of the changes.",
+    "note": "The public adaptation uses a neutral template. It does not include company components or publish to WordPress."
+  },
+  {
+    "id": "keyword-tracking",
+    "title": "Keyword tracking",
+    "input": "A keyword list, a target domain and search-location settings.",
+    "steps": ["Collect organic search results for each keyword.", "Record the target domain’s position and flag incomplete or failed searches.", "Compare saved runs to see how positions change over time."],
+    "output": "Dated search snapshots and a local ranking dashboard.",
+    "note": "An offline example is included. Live tracking requires your own Serper API key and an explicit request budget."
+  }
+]
