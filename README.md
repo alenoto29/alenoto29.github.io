@@ -1,7 +1,5 @@
 <div align="center">
 
-# Alessandro Noto · Portfolio
-
 **Growth & Automation. From seeing a problem to building something people can use.**
 
 Six projects about turning real questions into useful tools, clearer decisions and shared ways of working.
