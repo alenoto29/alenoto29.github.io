@@ -36,15 +36,16 @@ Six projects about turning real questions into useful tools, clearer decisions a
 <details>
 <summary><b>What is in here</b></summary>
 
-This repository holds the **built** site that GitHub Pages serves: static HTML, the Next.js export (`_next/`), images and the project pages.
+This repository holds the **built** site that GitHub Pages serves: plain static HTML, one stylesheet and one script.
 It is published as is; there is no build step to run here.
 
 | Path | What it is |
 |---|---|
 | `index.html` | the home page |
 | `projects/` | one page per project |
-| `images/` | artwork and project images |
-| `_next/` | static assets from the Next.js export |
+| `cv.html` | the CV |
+| `demos/` | two demos with made-up data, and the model evaluation chart |
+| `site.css`, `site.js` | the shared styles and the script that draws the objects |
 | `docs/screens/` | the screenshot used in this README |
 
 To preview it locally:
